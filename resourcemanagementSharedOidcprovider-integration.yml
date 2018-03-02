@@ -1,0 +1,26 @@
+spring:
+  profiles: integration
+  datasource:
+    url: jdbc:mariadb://stackoidcprovider-resourcemanagem-databasecluster-1dff6ezpoadiv.cluster-chknh2cwussk.us-east-1.rds.amazonaws.com:3306/oidc
+    username: oidcuser
+
+proxy:
+  baseRedirectURL: https://auth.integration.ebsco.zone/api/oidcprovider
+
+application:
+  signupLink:
+    DH Zuul Client: https://auth.integration.ebsco.zone/user/create
+    NSOIDCAdapter: https://auth.integration.ebsco.zone/api/nsoidcadapter/auth/signup-access
+    defaultLink: https://auth.integration.ebsco.zone/user/create
+  resetPasswordLink:
+    DH Zuul Client: https://auth.integration.ebsco.zone/user/resetPassword
+    NSOIDCAdapter: https://auth.integration.ebsco.zone/user/resetPassword/dmp
+    defaultLink: https://auth.integration.ebsco.zone/user/resetPassword
+
+openid:
+  connect:
+    server:
+      issuer: https://auth.integration.ebsco.zone
+
+gdpr:
+  enabled: false
