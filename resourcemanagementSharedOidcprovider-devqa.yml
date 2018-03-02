@@ -1,0 +1,34 @@
+spring:
+  profiles: devqa
+  datasource:
+    url: jdbc:mariadb://stackoidcprovider-resourcemanagem-databasecluster-8jjf6q1fsbcp.cluster-c4w82moezzdt.us-east-1.rds.amazonaws.com:3306/oidc
+    username: oidcuser
+
+proxy:
+  baseRedirectURL: https://auth.devqa.ebsco.zone/api/oidcprovider
+
+logging:
+  level:
+    ROOT: DEBUG
+    org.apache.http: DEBUG
+    com.netflix: DEBUG
+    org.springframework.jdbc: DEBUG
+    org.springframework.orm: DEBUG
+    org.springframework.security: DEBUG
+    org.mitre: DEBUG
+    com.ebsco: DEBUG
+
+application:
+  signupLink:
+    DH Zuul Client: https://auth.devqa.ebsco.zone/user/create
+    NSOIDCAdapter: https://auth.devqa.ebsco.zone/api/nsoidcadapter/auth/signup-access
+    defaultLink: https://auth.devqa.ebsco.zone/user/create
+  resetPasswordLink:
+    DH Zuul Client: https://auth.devqa.ebsco.zone/user/resetPassword
+    NSOIDCAdapter: https://auth.devqa.ebsco.zone/user/resetPassword/dmp
+    defaultLink: https://auth.devqa.ebsco.zone/user/resetPassword
+
+openid:
+  connect:
+    server:
+      issuer: https://auth.devqa.ebsco.zone
