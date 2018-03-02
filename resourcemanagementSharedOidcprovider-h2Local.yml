@@ -1,0 +1,24 @@
+spring:
+  profiles: h2-local
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:oic;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password:
+    platform: h2
+  
+flyway:
+  schemas: PUBLIC
+  locations: classpath:/db/migration/h2
+
+logging:
+  level:
+    ROOT: DEBUG
+    org.apache.http: INFO
+    com.netflix: INFO
+    org.hibernate: INFO
+    org.flywaydb: INFO
+    org.springframework: INFO
+#    org.springframework.security: DEBUG
+    org.mitre: DEBUG
+    com.ebsco: DEBUG

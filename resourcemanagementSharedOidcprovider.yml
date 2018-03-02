@@ -1,0 +1,197 @@
+spring:
+  application:
+    name: resourcemanagement.shared.oidcprovider
+    version: ${APP_VERSION:unknown}
+  mvc:
+    view:
+      prefix: /WEB-INF/views/
+      suffix: .jsp
+  datasource:
+    initialize: false
+    driverClassName: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://stackoidcprovider-resourcemanagem-databasecluster-11met9hd6pkif.cluster-c4w82moezzdt.us-east-1.rds.amazonaws.com:3306/oidc
+    username: oidcuser
+    #password: UcgWTE26v2nLeF4dJ  # TODO : replace with encrypted password for production/live OIC database
+    platform: mysql
+    testOnBorrow: true
+    connection-timeout: 60000
+    maximum-pool-size: 100
+    validationQuery: SELECT 1
+  zipkin:
+    baseUrl: http://zipkin.vpca.us-east-1.eis-delivery${AWS_ENV}.cloud/
+    service:
+      name: ${spring.application.name}:${spring.application.version}
+    sleuth:
+      sampler:
+      percentage: 0.5f
+
+proxy:
+  baseRedirectURL: https://auth.ebsco.zone/api/oidcprovider
+  
+
+security.filter-order: 5
+
+flyway:
+  enabled: true
+  schemas: oidc
+  locations: classpath:/db/migration/mysql
+
+server:  
+  port: ${service.port:8090}
+
+#Adding kinesis details for transaction logging
+transactionLogging:
+  enabled: true
+  kinesisStream:
+    name: "txn-logging-kinesis-stream-${AWS_ENV:live}"
+    region: "us-east-1"
+
+metric:
+  enabled: true
+  polling:
+    duration: 5
+  datadog:
+    reporter:
+      enabled: true
+  console:
+    reporter:
+      enabled: false
+
+info:
+  application: resourcemanagement.shared.oidcprovider
+  market: shared
+  domain: resourcemanagement
+  version: ${APP_VERSION:unknown}
+  containerId: ${HOSTNAME:container}
+
+application:
+  team: Authenticators
+  market: shared
+  domain: resourcemanagement
+  subenv: ${APP_SUB_ENV:subenv}
+  environment: ${AWS_ENV:environment}
+  containerId: ${HOSTNAME:container}
+  transactionIdHeader: "TRANSACTION_ID"
+  url: ""
+  email: EIS.AWSPlatform_Authenticators@ebsco.com@ebsco.com
+  oncall: http://confluence/pages/viewpage.action?pageId=124234710
+  version: ${APP_VERSION:unknown}
+  header:
+    x-forwarded-for:
+      value: X-Original-Ip
+  roles:
+    - name: ADMIN
+      desc: DH_ADMIN_ROLE
+    - name: USER
+      desc: DEFAULT_USER_ROLE
+    - name: ANONYMOUS
+      desc: ANONYMOUS_USER_ROLE
+  role:
+    dhadmin:
+      name: DHAdminRole
+  scope:
+    affiliation:
+      tokentype: access
+    role:
+      tokentype: access
+  session:
+    jwtCookieName: ebscoauthcontext
+  loginTitlebar:
+    DH Zuul Client: Sign In - Dynamic Health
+    defaultText: EBSCO Login
+  signupLink:
+    DH Zuul Client: https://auth.devqa.ebsco.zone/user/create
+    NSOIDCAdapter: https://auth.devqa.ebsco.zone/api/nsoidcadapter/auth/signup-access
+    defaultLink: https://auth.devqa.ebsco.zone/user/create
+  resetPasswordLink:
+    DH Zuul Client: https://auth.devqa.ebsco.zone/user/resetPassword
+    NSOIDCAdapter: https://auth.devqa.ebsco.zone/user/resetPassword/dmp
+    defaultLink: https://auth.devqa.ebsco.zone/user/resetPassword
+
+ebsco.logging.enabled: true
+ebsco.logging.http.request.injector.enabled: true
+
+openid:
+  connect:
+    server:
+      issuer: http://localhost:8090/
+      topbarTitle: OpenID Connect Server
+    crypto:
+      keystore:
+        path: classpath:keystore.jwks
+      signing:
+        defaultSignerKeyId: rsa1
+        defaultSigningAlgorithmName: RS256
+      encrypt:
+        defaultAlgorithm: RSA1_5
+        defaultDecryptionKeyId: rsa1
+        defaultEncryptionKeyId: rsa1
+    endpoints:
+      api:
+        whitelist.enabled: false
+        approvedsite.enabled: false
+        blacklist.enabled: false
+        client.enabled: false
+        data.enabled: false
+      oidc:
+        dynamicclientregistration.enabled: false
+        jwksetpublishing.enabled: true
+        userinfo.enabled: false
+      protectedresourceregistration.enabled: false
+      stats.enabled: false
+
+eureka:
+  instance:
+    nonSecurePort: ${PUBLIC_PORT:8090}
+    statusPageUrlPath: /info
+    healthCheckUrlPath: /health
+    appname: ${spring.application.name}
+    instanceId: ${spring.application.name}:${APP_VERSION}:${spring.application.instance_id:${HOSTNAME}}
+    metadataMap:
+      instanceId: ${spring.application.name}:${APP_VERSION}:${spring.application.instance_id:${HOSTNAME}}
+      version: ${APP_VERSION}
+  registration:
+    enabled: true
+    aws:
+      enabled: true
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: "http://eureka.vpca.us-east-1.eis-delivery${AWS_ENV}.cloud:8761/eureka/"
+
+logging:
+  level:
+    ROOT: INFO
+    org.springframework.security: INFO
+    org.mitre: INFO
+    com.ebsco: INFO
+    org.springframework.session.web.http.SessionRepositoryFilter.SESSION_LOGGER: INFO
+    
+keyPair:
+  sign: /key/sign/public.key
+  encrypt: /key/encrypt/private.key
+  
+log:
+  application:
+    market: ${application.market}
+    domain: ${application.domain}
+    subenv: ${application.subenv}
+    environment: ${application.environment}
+    containerId: ${application.containerId}
+    transactionIdHeader: ${application.transactionIdHeader}
+    
+hystrix:
+  command:
+    puaAuthenticate:
+      execution.isolation.thread.timeoutInMilliseconds: 85000
+    stsDecode:
+      execution.isolation.thread.timeoutInMilliseconds: 85000
+
+
+  
+gdpr:
+  enabled: true
+  promptNotificationName: GDPR ConsentForm
+  notification:
+    endpoint: http://platform.shared.notificationpromptmiddle
