@@ -1,0 +1,98 @@
+spring:
+  application:
+    name: resourcemanagement.shared.refurlauthmiddle
+    version: ${APP_VERSION:unknown}
+  zipkin:
+    baseUrl: "http://zipkin.vpca.us-east-1.eis-delivery${AWS_ENV}.cloud/"
+    service:
+      name: ${spring.application.name}:${spring.application.version}
+    sleuth:
+      sampler:
+      percentage: 0.5f
+  datasource:
+    initialize: false
+    driverClassName: org.mariadb.jdbc.Driver
+
+server:  
+  port: 8082
+  contextPath: /refurlauthmiddle
+
+eureka:
+  instance:
+    nonSecurePort: ${PUBLIC_PORT:8082}
+    statusPageUrlPath: ${server.contextPath}/info
+    healthCheckUrlPath: ${server.contextPath}/health
+    appname: ${spring.application.name}
+    instanceId: ${spring.application.name}:${APP_VERSION}:${spring.application.instance_id:${HOSTNAME}}
+    metadataMap:
+      instanceId: ${spring.application.name}:${APP_VERSION}:${spring.application.instance_id:${HOSTNAME}}
+      version: ${APP_VERSION}
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    healthcheck:
+      enabled: true
+    serviceUrl:
+      defaultZone: "http://eureka.vpca.us-east-1.eis-delivery${AWS_ENV}.cloud:8761/eureka/"
+
+metric:
+  enabled: true
+  polling:
+    duration: 5
+  datadog:
+    reporter:
+      enabled: true
+
+info:
+  # application: resourcemanagement.shared.refurlauthmiddle
+  market: shared
+  domain: resourcemanagement
+  # version: ${APP_VERSION:unknown}
+  containerId: ${HOSTNAME:container}
+
+response:
+  wrapper:
+    handler:
+      enabled: true   
+      
+audit:
+  request:
+    response:
+      handler:
+        enabled: true
+
+swagger:
+  title: RefURLAuthMiddle
+  description: RefURLAuthMIddle REST Services
+  contact:
+    name: AuthSome
+    url: http://www.ebsco.com
+    email: AWSPlatform.AuthSome@ebsco.com
+  version: 1.0.0
+  path:
+     selector:
+       type:
+         none:
+           enabled: false
+         any:
+           enabled: false
+         regex:
+           enabled: true
+       regex:
+         value: /authenticate
+       
+log:
+  application:
+    market: ${application.market}
+    domain: ${application.domain}
+    subenv: ${application.subenv}
+    environment: ${application.environment}
+    containerId: ${application.containerId}
+    transactionIdHeader: ${application.transactionIdHeader}
+    
+  
+# enable DataDogEventReporter and lifecycle reporting (lib-discover-shared-beanbag)
+beanbag.datadog.eventreporter.enabled: true
+#overriding beanbag configs
+beanbag.swaggerconfig.enabled: false
+beanbag.eurekaclientconfig.enabled: false

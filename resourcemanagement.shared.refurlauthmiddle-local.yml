@@ -1,0 +1,18 @@
+spring:
+  profiles: local
+  
+eureka:
+  aws:
+    registration:
+      enabled: false
+  instance:
+    hostname: ${vipAddress:refurlauthmiddle}
+  client:
+    registerWithEureka: false
+    fetchRegistry: false
+
+logging:
+  level:
+    root: DEBUG
+
+beanbag.datadog.eventreporter.enabled: false

@@ -1,0 +1,18 @@
+spring:
+  profiles: localWithEureka
+
+eureka:
+  aws:
+    registration:
+      enabled: false
+  instance:
+    hostname: ${vipAddress:refurlauthmiddle}
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: ${discovery.service.url}
+
+logging:
+  level:
+    root: DEBUG

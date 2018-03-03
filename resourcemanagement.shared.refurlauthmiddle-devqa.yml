@@ -1,0 +1,22 @@
+spring:
+  profiles: devqa
+  datasource:
+    url: jdbc:mariadb://stackrefurlprovider-resourcemanag-databasecluster-fdp84ds9yhe2.cluster-c4w82moezzdt.us-east-1.rds.amazonaws.com:3306/refurl
+    username: refurluser
+    driverClassName: org.mariadb.jdbc.Driver
+
+logging:
+  level:
+    ROOT: INFO
+    org.apache.http: INFO
+    com.netflix: INFO
+    org.springframework.jdbc: INFO
+    org.springframework.orm: INFO
+    org.springframework.security: INFO
+    org.mitre: INFO
+    com.ebsco: INFO
+
+flyway:
+  enabled: true
+  schemas: refurl
+  locations: classpath:/db/migration/mysql
